@@ -11,6 +11,7 @@ function ProductCard({ product }) {
             <img src={product.image} alt={product.title} className="object-cover" />
           </div>
           <h3 className="text-lg font-semibold mt-3">{product.title}</h3>
+          <h3 className="text-lg font-semibold mt-3">${product.price}</h3>
         </div>
       
       <div className="flex items-center justify-center">
