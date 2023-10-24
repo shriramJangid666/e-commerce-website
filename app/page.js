@@ -1,7 +1,8 @@
 'use client'
-import React, { useEffect, useState } from 'react';
-import ProductCard from './component/productCard/ProductCard';
+import React, { useEffect,  useState } from 'react';
+import ProductCard from './/productCard/ProductCard'
 import Link from 'next/link';
+import CartPage from './Cart/page';
 
 async function fetchProductData() {
   try {
@@ -30,6 +31,20 @@ async function categorizeProducts() {
 
 const Home = () => {
   const [categorizedProducts, setCategorizedProducts] = useState({});
+  const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
+
+
+  function addToCart(product) {
+    setCart((prev) => {
+      return [...prev, product];
+    });
+  }
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+  
+  console.log(cart)
 
 
   useEffect(() => {
@@ -40,6 +55,7 @@ const Home = () => {
     fetchData();
   }, []);
 
+
   
  
   return (
@@ -48,10 +64,8 @@ const Home = () => {
         <div key={category} className='flex-col items-center'>
           <h1>{category}</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {categorizedProducts[category].map((product) => (
-          <Link  href={`/Overview?id=${product.id}`}>
-              <ProductCard key={product.id} product={product} />
-          </Link>
+            {categorizedProducts[category].map((product) => (          
+              <ProductCard key={product.id} product={product} addToCart={addToCart} />
               ))}
           </div>
         </div>

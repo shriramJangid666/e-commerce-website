@@ -3,9 +3,8 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const ProductOverviewPage = () => {
-  const searchParams = useSearchParams().toString();
-  const parts = searchParams.split('=');
-  const productToShow = Number(parts[1]);
+  const searchParams = useSearchParams().toString().split('=');
+  const productToShow = Number(searchParams[1]);
 
   const [product, setProduct] = useState([]);
 
