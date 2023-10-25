@@ -1,8 +1,7 @@
-'use client'
-import React, { useEffect,  useState } from 'react';
-import ProductCard from './/productCard/ProductCard'
-import Link from 'next/link';
-import CartPage from './Cart/page';
+'use client'; // Use this directive to indicate that this component should run on the client-side
+
+import React, { useEffect, useState } from 'react';
+import ProductCard from './productCard/ProductCard';
 
 async function fetchProductData() {
   try {
@@ -31,21 +30,23 @@ async function categorizeProducts() {
 
 const Home = () => {
   const [categorizedProducts, setCategorizedProducts] = useState({});
-  const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
+  const [cart, setCart] = useState([]);
 
+  useEffect(() => {
+    // Check if we're running on the client-side
+    if (typeof window !== 'undefined') {
+      const storedCartData = JSON.parse(localStorage.getItem('cart')) || [];
+      setCart(Array.isArray(storedCartData) ? storedCartData : []);
+    }
+  }, []);
 
   function addToCart(product) {
-    setCart((prev) => {
-      return [...prev, product];
-    });
+    setCart((prevCart) => [...prevCart, product]);
   }
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
-  
-  console.log(cart)
-
 
   useEffect(() => {
     async function fetchData() {
@@ -55,23 +56,20 @@ const Home = () => {
     fetchData();
   }, []);
 
-
-  
- 
   return (
-    <div>
+    <div className="container mx-auto p-8">
       {Object.keys(categorizedProducts).map((category) => (
-        <div key={category} className='flex-col items-center'>
-          <h1>{category}</h1>
+        <div key={category} className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4">{category}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {categorizedProducts[category].map((product) => (          
+            {categorizedProducts[category].map((product) => (
               <ProductCard key={product.id} product={product} addToCart={addToCart} />
-              ))}
+            ))}
           </div>
         </div>
       ))}
     </div>
   );
-}
+};
 
 export default Home;

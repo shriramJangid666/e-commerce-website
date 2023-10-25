@@ -2,18 +2,40 @@
 import React, { useState, useEffect } from 'react';
 
 function CartPage() {
-  const [cartData, setCartData] = useState([]);
+  const [cartData, setCartData] = useState(JSON.parse(localStorage.getItem("cart")) || [])
 
 
   useEffect(() => {
     const storedCartData = JSON.parse(localStorage.getItem("cart")) || [];
+    // Ensure storedCartData is an array
+    if (!Array.isArray(storedCartData)) {
+      // Handle the case where storedCartData is not an array, for example:
+      console.error("Cart data is not an array:", storedCartData);
+    } else {
+      const updatedCartData = storedCartData.map(item => {
+        return { ...item, quantity: 1 };
+      });
 
-    const updatedCartData = storedCartData.map(item => {
-      return { ...item, quantity: 1 };
+      setCartData(updatedCartData);
+    }
+  },[]);
+
+
+  const updateQuantity = (itemId, newQuantity) => {
+    if (newQuantity < 1) {
+      return; // Ensure quantity doesn't go below 1
+    }
+
+    const updatedCart = cartData.map(item => {
+      if (item.id === itemId) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
     });
 
-    setCartData(updatedCartData);
-  }, []);
+    setCartData(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  }
 
   const handleRemoveItem = (itemId) => {
     const updatedCart = cartData.filter(item => item.id !== itemId);
@@ -22,7 +44,8 @@ function CartPage() {
   };
 
   const calculateGrandTotal = () => {
-    return cartData.reduce((total, item) => total + item.price * item.quantity, 0);
+    const total = cartData.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    return total.toFixed(2);
   };
 
   return (
@@ -40,14 +63,14 @@ function CartPage() {
                 <div className="flex items-center">
                   <button
                     className="bg-gray-200 text-gray-700 p-2 rounded-full mr-2"
-                    onClick={() => updatedCartData(item.id, item.quantity - 1)}
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
                   >
                     -
                   </button>
                   <span className="text-lg font-semibold">{item.quantity}</span>
                   <button
                     className="bg-gray-200 text-gray-700 p-2 rounded-full ml-2"
-                    onClick={() => updatedCartData(item.id, item.quantity + 1)}
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
                   >
                     +
                   </button>

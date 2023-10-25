@@ -1,6 +1,6 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { React,useEffect, useState } from 'react';
 
 const ProductOverviewPage = () => {
   const searchParams = useSearchParams().toString().split('=');
@@ -9,7 +9,7 @@ const ProductOverviewPage = () => {
   const [product, setProduct] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchData() { 
       try {
         const response = await fetch('https://fakestoreapi.com/products');
         const data = await response.json();
@@ -20,6 +20,9 @@ const ProductOverviewPage = () => {
     }
     fetchData();
   }, []);
+
+
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
@@ -43,9 +46,6 @@ const ProductOverviewPage = () => {
                 <div className="mt-4">
                   <button className="bg-green-500 text-white px-4 py-2 rounded-md mr-2">
                     Buy Now
-                  </button>
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded-md">
-                    Add to Cart
                   </button>
                 </div>
               </div>
